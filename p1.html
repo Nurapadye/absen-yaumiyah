@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absen Yaumiyah</title>
+    
+    <link rel="stylesheet" href="p2.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div id="loginModal" class="modal" style="display: flex;">
+        <div class="login-sheet">
+            <div class="login-sheet-header">
+                <span id="login-logo">🕌</span> 
+                <h3>LOGIN UNTUK ABSEN YAUMIYAH</h3>
+            </div>
+            <div class="login-sheet-body">
+                <div style="max-width: 400px; width: 100%;">
+                    <h3>Login Pengguna</h3>
+                    <input type="text" id="usernameInput" placeholder="Username" class="modal-input">
+                    <input type="password" id="passwordInput" placeholder="Password" class="modal-input">
+                    <button class="action-button btn-primary" onclick="handleLoginAttempt()">Masuk</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="mainAppContainer" class="container">
+        
+        <div id="appHeader">
+            <h2>Website Yaumiyah</h2>
+            <div id="authSection" style="text-align: right; display: flex; align-items: center; gap: 15px;">
+                <span id="currentUser" style="font-weight: 600; font-size: 14px;"></span>
+                <button id="logoutBtn" class="action-button btn-tidak" onclick="logout()" style="display: none; background-color: #e57373; color: white;">Keluar</button>
+            </div>
+        </div>
+
+        <div id="mainContentArea">
+            <div style="max-width: 1200px; margin: auto;"> 
+                
+                <div id="mainContent">
+                    <div class="date-control">
+                        <label for="datePicker">Pilih Tanggal:</label>
+                        <input type="date" id="datePicker" onchange="loadYaumiyah()">
+
+                        <div id="pengurusTools" style="display: none; display: flex; flex-wrap: wrap; gap: 10px;">
+                            <button class="action-button btn-primary" onclick="showManageAccountModal()">👤 Kelola Santri</button>
+                            <button class="action-button btn-primary" onclick="showManagePengurusModal()">👑 Kelola Pengurus</button>
+                            <button class="action-button btn-primary" onclick="showManageKegiatanModal()">➕ Kelola Kegiatan</button>
+                            <button class="action-button btn-report" onclick="showMonthlyReportModal()">📈 Rekap Bulanan</button>
+                        </div>
+                    </div>
+                    
+                    <div id="santriSelectorDiv" style="display:none; margin-bottom: 20px;">
+                        <label for="santriSelector">Cek Yaumiyah Santri:</label>
+                        <select id="santriSelector" onchange="loadYaumiyah()"></select>
+                    </div>
+
+                    <div id="yaumiyahTableContainer">
+                        </div>
+                    
+                    <div style="text-align: right; margin-top: 20px;">
+                        <button class="action-button btn-primary" onclick="unduhLaporanPDF()">⬇️ Unduh Laporan Harian (PDF)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="manageKegiatanModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-btn" onclick="closeModal('manageKegiatanModal')">&times;</span>
+            <div class="login-header" style="margin-bottom: 15px;"><h3>Kelola Daftar Kegiatan</h3></div>
+            <h4>Tambah Kegiatan Baru</h4>
+            <div style="display: flex; gap: 5px; margin-bottom: 15px;">
+                <input type="text" id="newKegiatanNama" placeholder="Nama Kegiatan" class="modal-input" style="flex-grow: 1;">
+                <select id="newKegiatanType" class="modal-input" style="width: 120px;">
+                    <option value="ya/tidak">ya/tidak</option>
+                    <option value="baca/tidak">baca/tidak</option>
+                </select>
+                <button class="action-button btn-primary" onclick="addKegiatan()">Tambah</button>
+            </div>
+            <h4 style="margin-top: 20px;">Daftar Kegiatan Saat Ini</h4>
+            <ul id="kegiatanList" style="list-style: none; padding: 0;"></ul>
+        </div>
+    </div>
+
+    <div id="manageAccountModal" class="modal">
+        <div class="modal-content" style="max-width: 700px; padding: 30px;">
+            <span class="close-btn" onclick="closeModal('manageAccountModal')">&times;</span>
+            <div class="login-header" style="margin-bottom: 15px;"><h3>Kelola Akun Santri</h3></div>
+            <h4>Tambah Santri Baru</h4>
+            <div class="form-row-wrap" style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <input type="text" id="newSantriNama" placeholder="Nama Lengkap" class="modal-input" style="flex-grow: 1;">
+                <input type="text" id="newSantriUsername" placeholder="Username" class="modal-input" style="width: 150px;">
+                <input type="password" id="newSantriPassword" placeholder="Password" class="modal-input" style="width: 150px;">
+                <button class="action-button btn-ya" onclick="addSantri()">Tambah</button>
+            </div>
+            <h4 style="margin-top: 20px;">Daftar Santri Terdaftar</h4>
+            <div id="santriAccountList"></div>
+        </div>
+    </div>
+
+    <div id="managePengurusModal" class="modal">
+        <div class="modal-content" style="max-width: 700px; padding: 30px;">
+            <span class="close-btn" onclick="closeModal('managePengurusModal')">&times;</span>
+            <div class="login-header" style="margin-bottom: 15px;"><h3>Kelola Akun Pengurus</h3></div>
+            <h4>Tambah Pengurus Baru</h4>
+            <div class="form-row-wrap" style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <input type="text" id="newPengurusNama" placeholder="Nama Lengkap" class="modal-input" style="flex-grow: 1;">
+                <input type="text" id="newPengurusUsername" placeholder="Username" class="modal-input" style="width: 150px;">
+                <input type="password" id="newPengurusPassword" placeholder="Password" class="modal-input" style="width: 150px;">
+                <button class="action-button btn-ya" onclick="addPengurus()">Tambah</button>
+            </div>
+            <h4 style="margin-top: 20px;">Daftar Akun Pengurus Terdaftar</h4>
+            <p style="font-size: 12px; color: red;">Catatan: Admin tidak bisa menghapus akun sendiri dan minimal harus ada 1 akun Pengurus.</p>
+            <div id="pengurusAccountList"></div>
+        </div>
+    </div>
+
+    <div id="monthlyReportModal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <span class="close-btn" onclick="closeModal('monthlyReportModal')">&times;</span>
+            <div class="login-header" style="margin-bottom: 15px;"><h3>Rekapitulasi Bulanan</h3></div>
+            
+            <div style="margin-bottom: 15px; display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+                <div>
+                    <label for="reportSantriSelector">Pilih Santri:</label>
+                    <select id="reportSantriSelector" onchange="showMonthlyReport()"></select>
+                </div>
+                <div>
+                    <label for="monthPicker">Pilih Bulan & Tahun:</label>
+                    <input type="month" id="monthPicker" onchange="showMonthlyReport()">
+                </div>
+            </div>
+
+            <div style="width: 100%; height: 300px; margin-bottom: 20px; border: 1px solid #eee; padding: 10px; position: relative;">
+                <canvas id="attendanceChart"></canvas>
+            </div>
+
+            <div id="monthlyReportContent">
+                <p>Pilih santri, bulan, dan tahun di atas untuk melihat rekapitulasi.</p>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="action-button btn-primary" onclick="unduhLaporanBulananPDF()">Unduh Rekap Bulanan (PDF)</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="p3.js"></script>
+</body>
+</html>

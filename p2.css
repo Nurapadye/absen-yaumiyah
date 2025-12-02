@@ -1,0 +1,114 @@
+/* --- VARIABEL WARNA --- */
+:root {
+    --primary-color: #1976D2; /* Biru Utama */
+    --secondary-color: #f7f9fc; 
+    --hadir-color: #4caf50; 
+    --tidak-color: #f44336; 
+    --text-color: #333;
+    --input-border-color: #ddd;
+    --box-shadow-subtle: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* --- GAYA GLOBAL --- */
+body { 
+    font-family: 'Poppins', sans-serif; 
+    margin: 0; padding: 0; 
+    background-color: var(--secondary-color); 
+    color: var(--text-color);
+    line-height: 1.6;
+    min-height: 100vh; 
+}
+
+/* --- HEADER & CONTAINER --- */
+.container {
+    max-width: 100%; margin: 0; padding: 0; 
+    background-color: var(--secondary-color); 
+    display: none; min-height: 100vh; 
+    flex-direction: column;
+}
+
+#appHeader {
+    background-color: var(--primary-color); 
+    padding: 20px 25px; text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    color: white; display: flex;
+    justify-content: space-between; align-items: center;
+}
+#appHeader h2 { color: white; margin: 0; font-size: 20px; border: none; text-align: left; }
+
+#mainContentArea {
+    max-width: 100%; width: 100%;
+    margin: 0; padding: 20px; 
+    background-color: white; 
+    min-height: calc(100vh - 60px); 
+    box-sizing: border-box;
+}
+
+/* --- MODAL --- */
+.modal {
+    display: none; position: fixed; z-index: 1000; 
+    left: 0; top: 0; width: 100%; height: 100%; 
+    overflow: auto; background-color: rgba(0,0,0,0.4); 
+}
+.modal-content {
+    background-color: #fefefe; margin: 5% auto; padding: 20px;
+    border: 1px solid #888; width: 90%; border-radius: 8px;
+    animation: fadeIn 0.4s;
+}
+.close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+.close-btn:hover { color: black; }
+
+/* Login Modal Full Screen */
+#loginModal { background-color: var(--secondary-color); }
+.login-sheet {
+    width: 100%; height: 100vh; overflow: auto; 
+    display: flex; flex-direction: column; animation: fadeIn 0.6s ease-out forwards;
+}
+.login-sheet-header {
+    background-color: var(--primary-color); padding: 40px 25px;
+    text-align: center; color: white;
+}
+.login-sheet-body {
+    padding: 40px 30px; background-color: #ffffff;
+    flex-grow: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+}
+
+/* --- KOMPONEN INPUT & TOMBOL --- */
+.date-control {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between;
+    align-items: center; padding: 15px; background-color: var(--secondary-color); 
+    border-radius: 8px; margin-bottom: 25px; box-shadow: var(--box-shadow-subtle); 
+}
+input, select {
+    padding: 12px; border-radius: 8px; border: 1px solid var(--input-border-color);
+    box-sizing: border-box; font-size: 16px;
+}
+.action-button {
+    padding: 10px 20px; border: none; border-radius: 5px; 
+    cursor: pointer; font-size: 16px; color: white;
+    transition: transform 0.1s;
+}
+.action-button:active { transform: scale(0.98); }
+.btn-primary { background-color: var(--primary-color); width: 100%; margin-top: 10px; }
+#pengurusTools .btn-primary { width: auto; margin-top: 0; }
+.btn-report { background-color: #ff9800; color: white; }
+.btn-ya { background-color: var(--hadir-color); }
+.btn-tidak { background-color: var(--tidak-color); }
+
+/* --- TABEL --- */
+table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 20px; border-radius: 8px; overflow: hidden; box-shadow: var(--box-shadow-subtle); }
+th, td { padding: 12px 10px; text-align: left; }
+th { background-color: var(--primary-color); color: white; font-size: 14px; text-transform: uppercase; }
+tr:nth-child(even) { background-color: #ffffff; }
+tr:nth-child(odd) { background-color: #f7f7f7; }
+.persentase-ok { color: var(--hadir-color); font-weight: bold; }
+.persentase-kurang { color: var(--tidak-color); font-weight: bold; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 600px) {
+    .date-control { flex-direction: column; align-items: stretch; }
+}
